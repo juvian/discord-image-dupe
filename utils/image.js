@@ -96,10 +96,8 @@ let show = i => ({id: i._id, processed: i.processed})
 async function findDuplicateHashes () {
     let image = await db.images.find({hash: {$exists: true}, processed: {$ne: true}}).sort({createdTimestamp: 1}).limit(1);
     if (!image.length) return;
-    image = image[0];
-    if ((await db.images.findOne({hash: {$exists: false}, guildId: image.guildId, createdTimestamp: {$lt: image.createdTimestamp}})) != null) return;
-  
-    let images = await db.images.find({$where: function() {return this.hash != null && this.createdTimestamp <= image.createdTimestamp && this.guildId == image.guildId && isSimilar(this, image) && this._id != image._id}});
+    image = image[0];  
+    let images = (await db.images.find({createdTimestamp: {$lt: image.createdTimestamp}, guildId: image.guildId, hash: {$exists: true}})).filter(im => isSimilar(im, image) && im._id != image._id);
     let messages = {originals: []}
     
     images.forEach(img => {

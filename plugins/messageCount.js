@@ -21,7 +21,7 @@ async function messageCount (msg, params) {
     let reaction = message.reactions.find((r) => r.emoji.name == '☑');
 
     if (reaction) {
-      let interestingUsers = (await reaction.fetchUsers()).filter((u) => !u.roles.has(winnersRole)).map((u) => u.id)
+      let interestingUsers = (await reaction.fetchUsers()).filter((u) => message.guild.members.get(u.id) && !message.guild.members.get(u.id).roles.has(winnersRole)).map((u) => u.id)
       let users = {}
       for (let channelId of process.env.CHANNELS_TO_COUNT.split(',')) {
           let messages = await bot.client.channels.get(channelId).fetchMessages({limit: 100});
