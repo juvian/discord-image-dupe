@@ -8,7 +8,7 @@ const db = require('../bot/db.js');
 const botUtils = require('../bot/utils.js')
 
 client.on('ready', async () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged in as ${client.user.tag}! in ${client.guilds.size} servers`);
   dbUtils.deleteVeryOldImages();
   doWork();
 });
