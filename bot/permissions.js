@@ -26,5 +26,6 @@ function owner (func) {
 
 module.exports = {
   admin: admin,
-  mod: mod
+  mod: mod,
+  owner: owner
 }
