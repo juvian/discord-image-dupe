@@ -1,0 +1,37 @@
+{
+  "//1": "describes your app and its dependencies",
+  "//2": "https://docs.npmjs.com/files/package.json",
+  "//3": "updating this file will download and update your packages",
+  "name": "discord-image-dupe",
+  "version": "1.0.0",
+  "description": "Discord bot for detecting duplicate image posts",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "discord.js": "*",
+    "express": "^4.16.4",
+    "express-handlebars": "*",
+    "jpeg-js": "*",
+    "nedb": "*",
+    "nedb-promises": "*",
+    "pngjs": "*",
+    "timeago.js": "*",
+    "xhr2": "*",
+    "probe-image-size": "*"
+  },
+  "engines": {
+    "node": "10.x"
+  },
+  "repository": {
+    "url": "https://github.com/juvian/discord-image-dupe"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "discord",
+    "bot",
+    "duplicate"
+  ]
+}
