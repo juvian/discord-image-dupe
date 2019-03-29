@@ -20,11 +20,11 @@ Commands
 - unset log: removes log channel from server configuration. Only availale to admins
 - set prefix: Sets command prefix. Default is `!`. Only availale to admins
 - watch: takes a channel id or name and starts keeping track of its images according to history. Only availale to admins
-- unwatch: takes a channel id or name and stops keeping track of its images. . Only availale to admins
+- unwatch: takes a channel id or name and stops keeping track of its images. Only availale to admins
 - config: shows current server configuration. Only available to mods
 - help: displays link to here
 
-**Note that server owner or bot owner bypasses all permissions**
+**Note: admin is either someone with the configured admin role or with administrator permissions. A mod is someone with the configured mod role or with manage guild permission**
 
 For Developers
 ------------
