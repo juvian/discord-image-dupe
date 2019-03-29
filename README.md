@@ -22,7 +22,7 @@ Commands
 - watch: takes a channel id or name and starts keeping track of its images according to history. Only availale to admins
 - unwatch: takes a channel id or name and stops keeping track of its images. Only availale to admins
 - config: shows current server configuration. Only available to mods
-- help: displays link to here
+- help: displays link to github
 
 **Note: admin is either someone with the configured admin role or with administrator permissions. A mod is someone with the configured mod role or with manage guild permission**
 
