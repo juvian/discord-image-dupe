@@ -92,7 +92,7 @@ async function closestMatch (message, args) {
 
 async function setRole (message, args) {
   if (args.length == 0) return bot.notify(message, `Not enough parameters. Usage: !set ${this} role rolename`);
-  if (message.guild.roles.exists("name", args[0])) {
+  if (message.guild.roles.some(r => r.name == args[0])) {
     await db.servers.update({_id: message.guild.id}, {$set: {[this + "Role"]: args[0]}});
     await bot.react(message, "✅");
   } else {
@@ -152,18 +152,18 @@ async function unwatchChannel (message, args) {
 async function showConfig (message) {
   let server = await dbUtils.getServerConfig(message.guild.id);
   
-  status = [];
+  let status = [];
   
   status.push(`Command prefix: **${server.prefix}**`)
   status.push(`Server history: **${server.history}** days`);
   status.push(`Bot mod role: **${server.modRole}**. Bot admin role: **${server.adminRole}**`);
-  
-  message.guild.channels.forEach(async channel => {
-      let config = await botUtils.getChannelConfig(channel);
+    
+  for (let channel of message.guild.channels.array()) {
+      let config = await dbUtils.getChannelConfig(channel);
       if (config) {
         status.push(channel.name + ' history: **' + config.history + '** days')
       }
-  });
+  };
   
   status.push(server.logChannel ? `Log channel: **${message.guild.channels.get(server.logChannel).name}**` : 'No log channel configured' );
   
@@ -208,11 +208,11 @@ function isVisible (command, message) {
 async function processCommands(commands, command, message) {
   try{
     if (commands.hasOwnProperty(command.toLowerCase()) && isVisible(commands[command], message)) {
-        return commands[command](message, command.toLowerCase());
+        return await commands[command](message, command.toLowerCase());
     } else {
         for (var cmd in commands) {
             if (command.toLowerCase().startsWith(cmd + ' ') && isVisible(commands[cmd], message)) {
-                return commands[cmd](message, command.split(cmd)[1].split(/ +/).filter(s => s.length))
+                return await commands[cmd](message, command.split(cmd)[1].split(/ +/).filter(s => s.length))
             }
         }
         return bot.notify(message, "Command not recognized, do !commands for list of commands");
