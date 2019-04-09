@@ -8,9 +8,14 @@ const db = require('../bot/db.js');
 const botUtils = require('../bot/utils.js')
 
 client.on('ready', async () => {
-  console.log(`Logged in as ${client.user.tag}! in ${client.guilds.size} servers`);
+  console.log(`Logged in as ${client.user.tag}! in ${client.guilds.size} servers: ${client.guilds.map(g => g.name + ' - ' + g.members.size + ' ' + g.id)}`);
+  client.user.setActivity("!help", {type: "PLAYING"})
   dbUtils.deleteVeryOldImages();
   doWork();
+});
+
+client.on('guildCreate', guild => {
+  console.log(`joined ${guild.name} - ${guild.members.size}`)
 });
 
 client.on("message", async message => {
@@ -70,7 +75,8 @@ async function processMessagesFromChannel (message, config, field) {
     if (messages.size < 100 || (now.getTime() > messages.last().createdTimestamp)) {
       if (field == "after") field = "before";
       else {
-        return await db.channels.update({_id: config._id}, {$set: {scannedOnce: true}});
+        await db.channels.update({_id: config._id}, {$set: {scannedOnce: true}});
+        break;
       }
     }
   }
@@ -126,14 +132,14 @@ module.exports.logError = async function (msg, error) {
   if (error && error.toString().trim())
     try {
       await client.channels.get(msg.channel.id).send(error.toString().trim()); 
-    } catch (ex) {console.log(ex)};
+    } catch (ex) {console.log("logError", ex)};
 }
 
 module.exports.notify = async function (msg, message) {
   if (message && (message instanceof RichEmbed || message.toString().trim()))
     try {
       await client.channels.get(msg.channel.id).send(message instanceof RichEmbed ? message : message.toString().trim());
-    } catch (ex) {console.log(ex)}
+    } catch (ex) {console.log("notify", ex)}
 }
 
 module.exports.react = async function (msg, reaction) {
