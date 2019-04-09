@@ -7,10 +7,7 @@ const permissions = require('../bot/permissions.js');
 const botUtils = require('../bot/utils.js');
 const imageUtils = require('../utils/image.js');
 const fs = require('fs');
-
-async function showCommands (message) {
-    return bot.notify(message, Object.keys(commands).filter(cmd => isVisible(commands[cmd], message)).join(', '));
-}
+const dmCommands = require('../bot/dm-commands.js').commands;
 
 async function showMissingHashes (message) {
     let qty = await db.images.count({hash: {$exists: false}, guildId: message.guild.id});
@@ -68,16 +65,19 @@ async function closestMatch (message, args) {
     let images = await dbUtils.getImageHashes([id])
     
     if (images.length == 1) {
-      let records = await db.images.find({hash: {$exists: true}, _id: {$ne: images[0]._id, guildId: images[0].guildId}});
+      let records = await db.images.find({hash: {$exists: true}, guildId: images[0].guildId});
       let closest = {img: null, dist: 10000};
        
       records.forEach((record) => {
        let dist = blockHash.hammingDistance(images[0].hash, record.hash);
-       if (closest.dist > dist) {
+       if (closest.dist > dist && images[0]._id != record._id) {
            closest = {img: record, dist: dist}
        }
       });
-
+      
+      if (closest.img == null) {
+        return bot.notify(message, "There are no images to compare")
+      }
       await dbUtils.addRelatedInfo([images[0], closest.img]);
          
       const embed = new RichEmbed().setDescription("Closest image to " +`${imageUtils.imageInfo(images[0], true)} is \n ${imageUtils.imageInfo(closest.img, true)} with ${closest.dist} bits of difference`);
@@ -170,16 +170,13 @@ async function showConfig (message) {
   await bot.notify(message, status.join('\n'));
 }
 
-async function showProcessing (message) {
-  console.log(botUtils.processing);
-}
+
 
 async function help (message) {
   return bot.notify(message, "<https://github.com/juvian/discord-image-dupe>")
 }
 
 var commands = {
-    'commands': showCommands,
     'missing hashes': permissions.mod(showMissingHashes),
     'delete image': permissions.mod(deleteImage),
     'missing process' : permissions.mod(showMissingProcess),
@@ -197,9 +194,6 @@ var commands = {
     'help': help 
 }
 
-var dmCommands = {
-  'processing': showProcessing
-}
 
 function isVisible (command, message) {
   return command.visibility instanceof Function ? command.visibility(message) : true;
@@ -207,6 +201,7 @@ function isVisible (command, message) {
 
 async function processCommands(commands, command, message) {
   try{
+    if (command == "commands") return bot.notify(message, Object.values(commands).filter(command => isVisible(command, message)).join(', '));
     if (commands.hasOwnProperty(command.toLowerCase()) && isVisible(commands[command], message)) {
         return await commands[command](message, command.toLowerCase());
     } else {
