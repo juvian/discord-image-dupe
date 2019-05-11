@@ -56,6 +56,16 @@ function getAttachmentsAndEmbedsFrom (message) {
   return msgs;
 } 
 
+function getDefaultChannel (guild) {
+  return guild.channels.get(guild.id) ||
+         guild.channels.find(channel => channel.name === "general") ||
+         guild.channels
+   .filter(c => c.type === "text" &&
+     c.permissionsFor(guild.client.user).has("SEND_MESSAGES"))
+   .sort((a, b) => a.position - b.position)
+   .first();
+}
+
 module.exports = {
   getChannel: getChannel,
   serverLock: serverLock,
@@ -64,5 +74,6 @@ module.exports = {
   lock: lock,
   getAttachmentsAndEmbedsFrom: getAttachmentsAndEmbedsFrom,
   processing: processing,
-  CustomError: CustomError
+  CustomError: CustomError,
+  getDefaultChannel: getDefaultChannel
 }
