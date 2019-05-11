@@ -3,7 +3,7 @@ const db = require('../bot/db.js');
 const botUtils = require('../bot/utils.js');
 
 async function recentServerActivity (message) {
-  let images = await db.images.find({}).sort({createdTimestamp: 1}).limit(500);
+  let images = await db.images.find({}).sort({createdTimestamp: -1}).limit(500);
   let count = {}
   
   for (let image of images) {
@@ -12,7 +12,7 @@ async function recentServerActivity (message) {
   
   let top = Object.keys(count).sort((a, b) => count[b] - count[a]).filter(id => bot.client.guilds.get(id)).slice(0, 20);
     
-  return bot.notify(message, top.map(id => bot.client.guilds.get(id).name + ' - ' + count[id] + ' - ' + bot.client.guilds.get(id).owner.user.tag).join('\n'));
+  return bot.notify(message, top.map(id => bot.client.guilds.get(id).name + ' - ' + count[id] + ' - ' + bot.client.guilds.get(id).owner.user.tag + ' - ' + bot.client.guilds.get(id).memberCount).join('\n'));
 }
 
 async function showServerInfo (message, args) {

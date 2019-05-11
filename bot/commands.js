@@ -201,9 +201,9 @@ function isVisible (command, message) {
 
 async function processCommands(commands, command, message) {
   try{
-    if (command == "commands") return bot.notify(message, Object.values(commands).filter(command => isVisible(command, message)).join(', '));
+    if (command == "commands") return bot.notify(message, Object.keys(commands).filter(command => isVisible(commands[command], message)).join(', '));
     if (commands.hasOwnProperty(command.toLowerCase()) && isVisible(commands[command], message)) {
-        return await commands[command](message, command.toLowerCase());
+        return await commands[command](message, command.toLowerCase().split(command)[1].split(/ +/).filter(s => s.length));
     } else {
         for (var cmd in commands) {
             if (command.toLowerCase().startsWith(cmd + ' ') && isVisible(commands[cmd], message)) {

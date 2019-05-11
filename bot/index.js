@@ -14,8 +14,9 @@ client.on('ready', async () => {
   doWork();
 });
 
-client.on('guildCreate', guild => {
+client.on('guildCreate', async guild => {
   console.log(`joined ${guild.name} - ${guild.members.size}`)
+  await joinedGuildMessage(guild);
 });
 
 client.on("message", async message => {
@@ -37,6 +38,11 @@ client.on("messageUpdate", async (oldMessage, newMessage) => {
 
 setInterval(doWork, 60000)
 
+client.on("disconnect", function () {
+  console.log("disconnected");
+  process.exit(1);
+})
+
 async function doWork () {
   try {
     await imageUtils.calculateMissingHashes()
@@ -48,6 +54,11 @@ async function doWork () {
 client.on("messageDelete", async message => {
   await db.images.remove({messageId: message.id}, {multi: true});
 })
+
+
+async function joinedGuildMessage (guild) {
+    await botUtils.getDefaultChannel(guild).send(`Thanks for inviting me to the server! To start using me, set up channels to watch for image duplicates with !watch. Use !help for further information.`).catch(console.log);
+}
 
 async function updateMessagesFromChannel (message) {  
   if (message.channel.config) {
@@ -150,5 +161,5 @@ module.exports.react = async function (msg, reaction) {
 module.exports.client = client;
 module.exports.updateMessagesFromChannel = updateMessagesFromChannel;
 
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN).catch(ex => {throw ex});
 

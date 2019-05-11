@@ -77,7 +77,7 @@ async function calculateMissingHashes (message) {
 function isHigherQuality (img, image) {
     let area1 = img.width * img.height;
     let area2 = image.width * image.height;
-    return area1 >= area2 || (area1 == area2 && img.fileSize > image.fileSize);
+    return area1 > area2 || (area1 == area2 && img.fileSize > image.fileSize * 0.95);
 }
 
 
@@ -103,7 +103,7 @@ async function findDuplicateHashes () {
     images.forEach(img => {
         if (Math.abs(img.createdTimestamp - image.createdTimestamp) / 60000 >= 5 || img.author != image.author) {
             img.diff = blockHash.hammingDistance(img.hash, image.hash);
-            if (img.createdTimestamp < image.createdTimestamp && isHigherQuality(img, image)) {
+            if (isHigherQuality(img, image)) {
                 messages.originals.push(img);
             }
         }
@@ -121,7 +121,7 @@ async function findDuplicates () {
             const embed = new RichEmbed().setDescription(imageInfo(data.image, true));
             embed.setThumbnail(data.image.url);
 
-            embed.addField('Duplicate of', data.originals.map(v => `${imageInfo(v, true)}`).join("\n"))
+            embed.addField('Duplicate of', data.originals.map(v => `${imageInfo(v, true)}`).join("\n").substring(0, 1024))
             let imageMessage;
           
             try {
