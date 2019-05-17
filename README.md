@@ -5,6 +5,10 @@ This is a bot that keeps track of images in configured channels and lets you kno
 
 Feel free to dm me any questions to **Juvian#4369**
 
+Getting Started
+--------------
+
+After inviting bot to your server, use !watch command to start tracking images from selected channel. It will take a while before it scans older messages from the channel to identify old images. By default it tracks images up to 30 days ago, you can change this with !history command. You can check progress with !missing hashes and !missing process. It is also recommended to use !set log command to choose a channel where the duplicate image info will be posted. Without this, only a ♻ reaction will be seen on new duplicated content.
 
 Commands
 ------------
@@ -22,11 +26,11 @@ Commands
 - unset log: removes log channel from server configuration. Only availale to admins
 - set prefix: Sets command prefix. Default is `!`. Only availale to admins
 - watch: takes a channel id or name and starts keeping track of its images according to history. Only availale to admins
-- unwatch: takes a channel id or name and stops keeping track of its images. . Only availale to admins
+- unwatch: takes a channel id or name and stops keeping track of its images. Only availale to admins
 - config: shows current server configuration. Only available to mods
-- help: displays link to here
+- help: displays link to github
 
-**Note that server owner or bot owner bypasses all permissions**
+**Note: admin is either someone with the configured admin role or with administrator permissions. A mod is someone with the configured mod role or with manage guild permission**
 
 
 For Developers
