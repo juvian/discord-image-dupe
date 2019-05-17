@@ -3,6 +3,8 @@ Discord Image Duplicate Detection
 
 This is a bot that keeps track of images in configured channels and lets you know when a duplicate is posted. Useful on servers with image posting channels such as wallpapers. Multiple servers supported. To check for duplicate images it uses the [blockhash](https://github.com/commonsmachinery/blockhash-js) library. When a duplicate is detected, a ♻ reaction is made on the message and if configured, a detailed embed is made on log channel.
 
+Feel free to dm me any questions to **Juvian#4369**
+
 
 Commands
 ------------
@@ -25,6 +27,7 @@ Commands
 - help: displays link to here
 
 **Note that server owner or bot owner bypasses all permissions**
+
 
 For Developers
 ------------
