@@ -19,7 +19,9 @@
     "pngjs": "*",
     "timeago.js": "*",
     "xhr2": "*",
-    "probe-image-size": "*"
+    "probe-image-size": "*",
+    "axios": "*",
+    "express-handlebars": "*"
   },
   "engines": {
     "node": "10.x"

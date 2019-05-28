@@ -5,19 +5,27 @@ const dbUtils = require('../utils/db.js')
 const imageUtils = require('../utils/image.js')
 const commands = require('../bot/commands.js')
 const db = require('../bot/db.js');
-const botUtils = require('../bot/utils.js')
+const botUtils = require('../bot/utils.js');
+const axios = require('axios');
+
 
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}! in ${client.guilds.size} servers: ${client.guilds.map(g => g.name + ' - ' + g.members.size + ' ' + g.id)}`);
   client.user.setActivity("!help", {type: "PLAYING"})
   dbUtils.deleteVeryOldImages();
+  notifyGuildCount();
   doWork();
 });
 
 client.on('guildCreate', async guild => {
   console.log(`joined ${guild.name} - ${guild.members.size}`)
+  notifyGuildCount();
   await joinedGuildMessage(guild);
 });
+
+async function notifyGuildCount () {
+  axios.post("https://bots.ondiscord.xyz/bot-api/bots/" + client.user.id + "/guilds", {guildCount: client.guilds.size}, {headers: {"Authorization": process.env.BOT_LIST_API_KEY}}).catch(console.log);
+}
 
 client.on("message", async message => {
   if (!message.guild) return await commands.processDM(message.content, message);

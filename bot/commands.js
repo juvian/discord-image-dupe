@@ -165,7 +165,9 @@ async function showConfig (message) {
       }
   };
   
-  status.push(server.logChannel ? `Log channel: **${message.guild.channels.get(server.logChannel).name}**` : 'No log channel configured' );
+  status.push(`Time leeway: ` + dbUtils.getLeeway(server) + ' minutes');
+  
+  status.push(server.logChannel ? `Log channel: **${message.guild.channels.get(server.logChannel).name}**` : 'No log channel configured' );  
   
   await bot.notify(message, status.join('\n'));
 }
@@ -174,6 +176,13 @@ async function showConfig (message) {
 
 async function help (message) {
   return bot.notify(message, "<https://github.com/juvian/discord-image-dupe>")
+}
+
+async function setTimeLeeway (message, args) {
+    if (args.length == 0 || parseInt(args[0]) < 0) return bot.notify(message, "Missing parameters. Usage: !set time leeway minutes where minutes is the amount of minutes to allow the same user to post similar images without getting marked as duplicate")
+    
+    await db.servers.update({_id: message.guild.id}, {$set: {timeLeeway: parseInt(args[0])}});
+    await bot.react(message, "✅");
 }
 
 var commands = {
@@ -191,12 +200,13 @@ var commands = {
     'watch': permissions.admin(watchChannel),
     'unwatch': permissions.admin(unwatchChannel),
     'config': permissions.mod(showConfig),
+    'set time leeway': permissions.mod(setTimeLeeway),
     'help': help 
 }
 
 
 function isVisible (command, message) {
-  return command.visibility instanceof Function ? command.visibility(message) : true;
+  return command && command.visibility instanceof Function ? command.visibility(message) : true;
 }
 
 async function processCommands(commands, command, message) {

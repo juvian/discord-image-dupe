@@ -47,6 +47,9 @@ async function addRelatedInfo (images) {
   });
 }
 
+function getLeeway(config) {
+  return config.timeLeeway == null ? 5 : config.timeLeeway;
+}
 
 function compactImages () {
     db.images.persistence.compactDatafile();
@@ -57,7 +60,7 @@ async function deleteOldImages (channelIds) {
     let channel = bot.client.channels.get(channelId);
     if (channel) { 
       let config = await getChannelConfig(channel);
-      let days = config.history;
+      let days = (config || {history: 0}).history;
 
       let now = new Date();
       now.setDate(now.getDate() - days);
@@ -98,5 +101,6 @@ module.exports = {
   markAsProcessed: markAsProcessed,
   addUser: addUser,
   getChannelConfig: getChannelConfig,
-  deleteVeryOldImages: deleteVeryOldImages
+  deleteVeryOldImages: deleteVeryOldImages,
+  getLeeway: getLeeway 
 }
