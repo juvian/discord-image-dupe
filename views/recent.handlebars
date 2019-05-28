@@ -1,0 +1,14 @@
+{{#each servers}}
+<div>
+  <h1 class="text-center">
+    {{name}} ({{count}})
+  </h1>
+  <div class="row">
+    {{#each images}}
+    <div class="col-lg-2 col-md-3 col-6" style="margin-bottom:10px;">
+      <img src="{{url}}" class="card-img-top">
+    </div>
+    {{/each}}
+  </div>
+</div>
+{{/each}}

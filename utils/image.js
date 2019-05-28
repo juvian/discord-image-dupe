@@ -99,9 +99,10 @@ async function findDuplicateHashes () {
     image = image[0];  
     let images = (await db.images.find({createdTimestamp: {$lt: image.createdTimestamp}, guildId: image.guildId, hash: {$exists: true}})).filter(im => isSimilar(im, image) && im._id != image._id);
     let messages = {originals: []}
+    let config = await dbUtils.getServerConfig(image.guildId);  
     
     images.forEach(img => {
-        if (Math.abs(img.createdTimestamp - image.createdTimestamp) / 60000 >= 5 || img.author != image.author) {
+        if (Math.abs(img.createdTimestamp - image.createdTimestamp) / 60000 >= dbUtils.getLeeway(config) || img.author != image.author) {
             img.diff = blockHash.hammingDistance(img.hash, image.hash);
             if (isHigherQuality(img, image)) {
                 messages.originals.push(img);
@@ -110,13 +111,13 @@ async function findDuplicateHashes () {
     })
     
     await dbUtils.addRelatedInfo([image].concat(messages.originals));
-    return {originals: messages.originals, image: image};
+    return {originals: messages.originals, image: image, config: config};
 }
 
 async function findDuplicates () {
     let data = await findDuplicateHashes();
     while (data != null) {
-        let config = await dbUtils.getServerConfig(data.image.guildId);  
+        let config = data.config;  
         if (data.originals.length > 0) {
             const embed = new RichEmbed().setDescription(imageInfo(data.image, true));
             embed.setThumbnail(data.image.url);

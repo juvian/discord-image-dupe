@@ -30,6 +30,7 @@ Commands
 - unwatch: takes a channel id or name and stops keeping track of its images. Only availale to admins
 - config: shows current server configuration. Only available to mods
 - help: displays link to github
+- set time leeway: sets the amount of minutes to allow same author to post images without getting flagged. The default is 5 and this prevents cases where an user posts similar images from a set like girl with eyes open and then closed. Set to 0 for no leeway
 
 **Note: admin is either someone with the configured admin role or with administrator permissions. A mod is someone with the configured mod role or with manage guild permission**
 
