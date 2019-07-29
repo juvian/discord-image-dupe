@@ -10,7 +10,7 @@ const axios = require('axios');
 
 
 client.on('ready', async () => {
-  console.log(`Logged in as ${client.user.tag}! in ${client.guilds.size} servers: ${client.guilds.map(g => g.name + ' - ' + g.members.size + ' ' + g.id)}`);
+  console.log(`Logged in as ${client.user.tag}! in ${client.guilds.size} servers`);
   client.user.setActivity("!help", {type: "PLAYING"})
   dbUtils.deleteVeryOldImages();
   notifyGuildCount();
@@ -36,7 +36,12 @@ client.on("message", async message => {
       await updateMessagesFromChannel(message);  
       await doWork();
     }
-  } catch (ex){console.log(ex)}
+  } catch (ex){
+    if (ex.toString().includes("already running") == false) {
+      console.log(ex)
+      client.users.get(process.env.BOT_OWNER).send(ex);
+    }
+  }
 });
 
 client.on("messageUpdate", async (oldMessage, newMessage) => {
@@ -108,33 +113,35 @@ processMessagesFromChannel = botUtils.channelLock(processMessagesFromChannel);
 async function processMessages (messages, config) {
   if (!config) return;
   
-  messages.forEach(async message => {     
-    let added = false;
-    botUtils.getAttachmentsAndEmbedsFrom(message).forEach(async attachment => {
-      let extension = attachment.url.split(".").pop();
-      
-      if (attachment.width && attachment.height && extension.startsWith('jpg') || extension.startsWith('png')) {
-        let image = {
-          _id: attachment.id,
-          url: attachment.url,
-          createdTimestamp: message.createdTimestamp,
-          author: message.author.id,
-          messageId: message.id,
-          messageUrl: message.url,
-          channelId: message.channel.id,
-          guildId: message.guild.id
+  messages.forEach(async message => {  
+    if(message.author.id !== client.user.id) {
+      let added = false;
+      botUtils.getAttachmentsAndEmbedsFrom(message).forEach(async attachment => {
+        let extension = attachment.url.split(".").pop();
+
+        if (attachment.width && attachment.height && extension.startsWith('jpg') || extension.startsWith('png')) {
+          let image = {
+            _id: attachment.id,
+            url: attachment.url,
+            createdTimestamp: message.createdTimestamp,
+            author: message.author.id,
+            messageId: message.id,
+            messageUrl: message.url,
+            channelId: message.channel.id,
+            guildId: message.guild.id
+          }
+
+          if (config.scannedOnce != true) image.processed = true;
+
+          await db.images.update({_id: image._id}, {$set: image}, {upsert: true});
+
+          added = true;
         }
+      });  
 
-        if (config.scannedOnce != true) image.processed = true;
-        
-        await db.images.update({_id: image._id}, {$set: image}, {upsert: true});
-
-        added = true;
+      if (added) {
+        await dbUtils.addUser(message.author);
       }
-    });  
-    
-    if (added) {
-      await dbUtils.addUser(message.author);
     }
   });  
 }

@@ -47,7 +47,7 @@ function getAttachmentsAndEmbedsFrom (message) {
     
     message.embeds.forEach(function(embed,index){
         let image = embed.image || embed.thumbnail;
-        if (embed.type == 'image' && image) {
+        if ((embed.type == 'image' || (embed.type == 'rich' && embed.url)) && image) {
             image.id = message.id + '-' + index;
             msgs.push(image)
         }

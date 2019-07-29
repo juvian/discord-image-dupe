@@ -1,6 +1,14 @@
 const db = require('./bot/db.js');
 
-(async function () {
-  let res = await db.images.find({guildId: {$ne: "535395010485682176"}}).sort({createdTimestamp: -1}).limit(5);
-  console.log(res)
-}())
+const Discord = require('discord.js');
+const client = new Discord.Client();
+
+
+client.on('ready', async () => {
+    let msg = await client.channels.get('557308996701257772').fetchMessage('605427118351974411');
+  console.log(msg.embeds[0].image)
+})
+
+
+
+client.login(process.env.TOKEN).catch(ex => {throw ex});

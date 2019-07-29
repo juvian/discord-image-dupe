@@ -43,7 +43,7 @@ async function addRelatedInfo (images) {
 
   images.forEach(message => {
     message.author = usersMap.get(message.author.toString());
-    message.channelName = bot.client.channels.get(message.channelId).name;
+    message.channelName = (bot.client.channels.get(message.channelId) || {name: ""}).name;
   });
 }
 
