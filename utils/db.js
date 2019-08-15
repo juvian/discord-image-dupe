@@ -35,15 +35,17 @@ async function addRelatedInfo (images) {
 
   userIds.forEach(async userId => {
     if (usersMap.get(userId) == null) {
-      let user = await bot.client.fetchUser(userId);
-      user = await addUser(user);
-      usersMap.set(user._id, user);
+      try {
+        let user = await bot.client.fetchUser(userId);
+        user = await addUser(user);
+        usersMap.set(user._id, user);
+      } catch (e) {}
     }
   })
 
   images.forEach(message => {
     message.author = usersMap.get(message.author.toString());
-    message.channelName = bot.client.channels.get(message.channelId).name;
+    message.channelName = (bot.client.channels.get(message.channelId) || {name: ""}).name;
   });
 }
 
@@ -79,15 +81,15 @@ async function markAsProcessed (image) {
     await db.images.update({_id: image._id}, {$set: {processed: true}});
 }
 
-async function addUser (author) {
+async function addUser (author, member) {
   let user = {
     _id: author.id,
     avatarUrl: author.avatarUrl,
     displayAvatarURL: author.displayAvatarURL,
+    displayName: member? member.displayName : "",
     username: author.username,
     tag: author.tag
   };
-
   await db.users.update({_id: user._id}, {$set: user}, {upsert: true});
   return user;
 }

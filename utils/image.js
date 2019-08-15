@@ -10,23 +10,15 @@ const probeSize = require('probe-image-size');
 
 
 function imageInfo (image, useMarkdown) {
-    image.author = image.author || {username: '?'}
-    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} posted by ${image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
+    image.author = image.author || {username: '?', displayName: '?'}
+    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
 }
 
-async function updateImageHash (image, index) {
-  if (image && image.hash == null) {
-    try {
-      if (image.tries >= 3) throw "Too many tries for " + image.url;
-      await db.images.update({_id: image._id}, {$inc: {tries: 1}});
-      if (index % 100 == 0) dbUtils.compactImages();
-      
-      let imageData = await probeSize(image.url);
+function getResizedUrls(imageData, image) {
       let ratio = imageData.width > 800 ? imageData.width / 800 : 1;
       let params = `?width=${Math.floor(imageData.width / ratio)}&height=${Math.floor(imageData.height / ratio)}`;
+  
       let urls = [];
-      
-
 
       if (image.url.includes("discordapp") && image.width) {
         urls.push(image.url.replace("cdn.discordapp.com", "media.discordapp.net") + (image.url.includes("cdn.discordapp.com") ? params : ''))
@@ -37,7 +29,19 @@ async function updateImageHash (image, index) {
       }
 
       urls.push(image.url);
+  
+      return urls;
+}
 
+async function updateImageHash (image, index) {
+  if (image && image.hash == null) {
+    try {
+      if (image.tries >= 3) throw "Too many tries for " + image.url;
+      await db.images.update({_id: image._id}, {$inc: {tries: 1}});
+      if (index % 100 == 0) dbUtils.compactImages();
+      
+      let imageData = await probeSize(image.url);
+      let urls = getResizedUrls(imageData, image);
       let url;
 
       while (urls.length && !url) {
@@ -145,5 +149,6 @@ module.exports = {
   updateImageHash: updateImageHash,
   calculateMissingHashes: botUtils.globalLock(calculateMissingHashes),
   findDuplicates: botUtils.globalLock(findDuplicates),
-  imageInfo: imageInfo
+  imageInfo: imageInfo,
+  getResizedUrls: getResizedUrls
 }
