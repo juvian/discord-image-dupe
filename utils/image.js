@@ -10,8 +10,8 @@ const probeSize = require('probe-image-size');
 
 
 function imageInfo (image, useMarkdown) {
-    image.author = image.author || {username: '?'}
-    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} posted by ${image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
+    image.author = image.author || {username: '?', displayName: '?'}
+    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
 }
 
 function getResizedUrls(imageData, image) {

@@ -135,13 +135,12 @@ async function processMessages (messages, config) {
 
           await db.images.update({_id: image._id}, {$set: image}, {upsert: true});
 
-          added = true;
+          if (added == false) {
+            added = true;
+            await dbUtils.addUser(message.author, message.member);
+          }
         }
       });  
-
-      if (added) {
-        await dbUtils.addUser(message.author);
-      }
     }
   });  
 }
