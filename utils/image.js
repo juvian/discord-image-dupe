@@ -101,7 +101,14 @@ async function findDuplicateHashes () {
     let image = await db.images.find({hash: {$exists: true}, processed: {$ne: true}}).sort({createdTimestamp: 1}).limit(1);
     if (!image.length) return;
     image = image[0];  
-    let images = (await db.images.find({createdTimestamp: {$lt: image.createdTimestamp}, guildId: image.guildId, hash: {$exists: true}})).filter(im => isSimilar(im, image) && im._id != image._id);
+    let filters = {createdTimestamp: {$lt: image.createdTimestamp}, guildId: image.guildId, hash: {$exists: true}};
+  
+    try {
+      let channelIds = (await dbUtils.getGroupChannels(image.channelId, image.guildId)).map(c => c._id);
+      filters.channelId = {$in: channelIds};
+    } catch(ex) {}
+  
+    let images = (await db.images.find(filters)).filter(im => isSimilar(im, image) && im._id != image._id);
     let messages = {originals: []}
     let config = await dbUtils.getServerConfig(image.guildId);  
     

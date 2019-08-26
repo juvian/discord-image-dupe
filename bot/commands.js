@@ -49,11 +49,12 @@ async function setHistoryDuration (message, args) {
       await bot.react(message, "✅");
       return await dbUtils.deleteOldImages(message.guild.channels.array().map(c => c.id));
     }
-  
+    
     let channel = botUtils.getChannel(args[0], message);  
-    if (!message.config) return bot.notify(message, "Channel is not on watch list, add it first using !watch");
+    let config = await dbUtils.getChannelConfig(channel);  
+    if (!config) return bot.notify(message, "Channel is not on watch list, add it first using !watch");
 
-    await db.channels.update({_id: channel.id}, {$set: {history: parseInt(args[1]), $unset: {after: true, before: true}}});
+    await db.channels.update({_id: channel.id}, {$set: {history: parseInt(args[1])}, $unset: {after: true, before: true}});
     await bot.react(message, "✅");
     await dbUtils.deleteOldImages([channel.id]);
 }
@@ -161,7 +162,7 @@ async function showConfig (message) {
   for (let channel of message.guild.channels.array()) {
       let config = await dbUtils.getChannelConfig(channel);
       if (config) {
-        status.push(channel.name + ' history: **' + config.history + '** days')
+        status.push(`${channel.name} history **${config.history}** days ${config.group ? ' group: **' + config.group + '**' : ''}`);
       }
   };
   
@@ -185,6 +186,17 @@ async function setTimeLeeway (message, args) {
     await bot.react(message, "✅");
 }
 
+async function setGroup(message, args) {
+  if (args.length <= 1) return bot.notify(message, "Missing parameters. Usage: !group channel groupname where channel is either the name or id of the channel. Images are only compared against channels with same group");
+  let channel = botUtils.getChannel(args[0], message); 
+  
+  let config = await dbUtils.getChannelConfig(channel);  
+  if (!config) return bot.notify(message, "Channel is not on watch list, add it first using !watch");
+  
+  await db.channels.update({_id: channel.id}, {$set: {group: args[1]}});
+  await bot.react(message, "✅");
+}
+
 var commands = {
     'missing hashes': permissions.mod(showMissingHashes),
     'delete image': permissions.mod(deleteImage),
@@ -201,6 +213,7 @@ var commands = {
     'unwatch': permissions.admin(unwatchChannel),
     'config': permissions.mod(showConfig),
     'set time leeway': permissions.mod(setTimeLeeway),
+    'group': permissions.mod(setGroup),
     'help': help 
 }
 

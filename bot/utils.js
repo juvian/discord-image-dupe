@@ -3,7 +3,7 @@ class CustomError extends Error {}
 let processing = {}
 
 function getChannel (channel, message) {
-  let channels = message.guild.channels.array().filter(c => c.id == channel || c.name == channel);
+  let channels = message.guild.channels.array().filter(c => c.id == channel || c.name == channel || "<#" + c.id + ">" == channel);
   if (channels.length == 0) {
     throw new CustomError(channel + " does not exist");
   }

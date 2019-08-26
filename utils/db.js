@@ -23,6 +23,27 @@ async function getChannelConfig (channel) {
   return Object.assign(server, parent || {}, config);
 }
 
+async function getGroupChannels(channelId, guildId) {
+  let serverConfig = await getServerConfig(guildId);
+  let channels = await bot.client.guilds.get(guildId).channels.array();
+  let dbChannels = await db.channels.find({_id: {$in: channels.map(c => c.id)}});
+    
+  let configs = solveConfigs(channels, dbChannels, serverConfig);
+  
+  let channel = configs.filter(c => c._id == channelId);
+  if (channel.length == 0 || !channel[0].group) return configs;
+  else return configs.filter(c => c.group == channel[0].group);
+}
+
+function solveConfigs(channels, dbChannels, serverConfig) {
+  let configs = dbChannels.reduce((tot, cur) => {
+    tot[cur._id] = cur;
+    return tot;
+  }, {});
+  
+  return channels.map(c => Object.assign({}, configs[c.parentID] || {}, configs[c.id] || {_id: c.id}))
+}
+
 async function getImageHashes (imageIds) {
   return db.images.find({$or: [{_id: {$in: imageIds}}, {messageId: {$in: imageIds}}]});
 }
@@ -104,5 +125,6 @@ module.exports = {
   addUser: addUser,
   getChannelConfig: getChannelConfig,
   deleteVeryOldImages: deleteVeryOldImages,
-  getLeeway: getLeeway 
+  getLeeway: getLeeway,
+  getGroupChannels: getGroupChannels
 }
