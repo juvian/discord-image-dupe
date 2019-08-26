@@ -1,4 +1,6 @@
 const db = require('./bot/db.js');
+const probeSize = require('probe-image-size');
+
 /*
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -13,8 +15,3 @@ client.on('ready', async () => {
 
 client.login(process.env.TOKEN).catch(ex => {throw ex});
 */
-
-(async () => {
-  let users = await db.users.find({"_id": '467037758976950272'});
-  console.log(users)
-})();

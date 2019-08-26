@@ -31,6 +31,7 @@ Commands
 - config: shows current server configuration. Only available to mods
 - help: displays link to github
 - set time leeway: sets the amount of minutes to allow same author to post images without getting flagged. The default is 5 and this prevents cases where an user posts similar images from a set like girl with eyes open and then closed. Set to 0 for no leeway
+- group: if you don't want to compare images against all others from server, you can make groups! An image will be compared against all images from channels with same group as channel it was posted. 
 
 **Note: admin is either someone with the configured admin role or with administrator permissions. A mod is someone with the configured mod role or with manage guild permission**
 
