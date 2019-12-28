@@ -7,11 +7,12 @@ const RichEmbed = require('discord.js').RichEmbed;
 const dbUtils = require('../utils/db.js')
 const bot = require('../bot/index.js');
 const probeSize = require('probe-image-size');
+const prettyBytes = require('pretty-bytes');
 
 
 function imageInfo (image, useMarkdown) {
     image.author = image.author || {username: '?', displayName: '?'}
-    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
+    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} (${prettyBytes(image.fileSize || 0)}) posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
 }
 
 function getResizedUrls(imageData, image) {
@@ -81,7 +82,7 @@ async function calculateMissingHashes (message) {
 function isHigherQuality (img, image) {
     let area1 = img.width * img.height;
     let area2 = image.width * image.height;
-    return area1 > area2 || (area1 == area2 && img.fileSize > image.fileSize * 0.95);
+    return area1 >= area2 // || (area1 == area2 && img.fileSize > image.fileSize * 0.95);
 }
 
 
