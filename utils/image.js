@@ -7,11 +7,12 @@ const RichEmbed = require('discord.js').RichEmbed;
 const dbUtils = require('../utils/db.js')
 const bot = require('../bot/index.js');
 const probeSize = require('probe-image-size');
+const prettyBytes = require('pretty-bytes');
 
 
 function imageInfo (image, useMarkdown) {
     image.author = image.author || {username: '?', displayName: '?'}
-    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
+    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} (${prettyBytes(image.fileSize || 0)}) posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
 }
 
 function getResizedUrls(imageData, image) {
@@ -20,11 +21,13 @@ function getResizedUrls(imageData, image) {
   
       let urls = [];
 
-      if (image.url.includes("discordapp") && image.width) {
+      if (image.url.includes("discordapp") && imageData.width) {
         urls.push(image.url.replace("cdn.discordapp.com", "media.discordapp.net") + (image.url.includes("cdn.discordapp.com") ? params : ''))
       } else {
-        urls.push("https://rsz.io/" + image.url.replace("https://", "").replace("http://", "") + params);
-        urls.push("http://www.picresize.com/api" + params + "&fetch=" + image.url);
+        if (image.proxyURL) urls.push(image.proxyURL + params);
+        //urls.push("https://rsz.io/" + image.url.replace("https://", "").replace("http://", "") + params);
+        urls.push("https://images.weserv.nl/?url=" + image.url + params.replace("width", "w").replace("height", "h"))
+        //urls.push("http://www.picresize.com/api" + params + "&fetch=" + image.url);
         urls.push(image.url + params);
       }
 
@@ -58,18 +61,20 @@ async function updateImageHash (image, index) {
       if (image.tries >= 3) {
         console.log(ex, "image removed", image.url);
         await db.images.remove({_id: image._id});
+        let config = await dbUtils.getServerConfig(image.guildId);  
+        if (config.logChannel) await bot.notify({channel : {id: config.logChannel}}, new RichEmbed().setDescription(`failed to process image ${image.messageId}`));
       } else console.log(ex)
     }
   }
 }
 
 
-async function getImageWithoutHash (message) {
+async function getImageWithoutHash () {
   return await db.images.findOne({hash: {$exists: false}});
 }
 
 async function calculateMissingHashes (message) {
-  let image = await getImageWithoutHash(message);
+  let image = await getImageWithoutHash();
   let index = 0;
   
   while (image != null) {
@@ -81,7 +86,7 @@ async function calculateMissingHashes (message) {
 function isHigherQuality (img, image) {
     let area1 = img.width * img.height;
     let area2 = image.width * image.height;
-    return area1 > area2 || (area1 == area2 && img.fileSize > image.fileSize * 0.95);
+    return area1 >= area2 // || (area1 == area2 && img.fileSize > image.fileSize * 0.95);
 }
 
 

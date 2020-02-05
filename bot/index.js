@@ -24,7 +24,7 @@ client.on('guildCreate', async guild => {
 });
 
 async function notifyGuildCount () {
-  axios.post("https://bots.ondiscord.xyz/bot-api/bots/" + client.user.id + "/guilds", {guildCount: client.guilds.size}, {headers: {"Authorization": process.env.BOT_LIST_API_KEY}}).catch(console.log);
+  axios.post("https://bots.ondiscord.xyz/bot-api/bots/" + client.user.id + "/guilds", {guildCount: client.guilds.size}, {headers: {"Authorization": process.env.BOT_LIST_API_KEY}}).catch(e => console.log("failed to update bot count"));
 }
 
 client.on("message", async message => {
@@ -128,7 +128,8 @@ async function processMessages (messages, config) {
             messageId: message.id,
             messageUrl: message.url,
             channelId: message.channel.id,
-            guildId: message.guild.id
+            guildId: message.guild.id,
+            proxyURL: attachment.proxyURL
           }
 
           if (config.scannedOnce != true) image.processed = true;
@@ -152,12 +153,12 @@ async function checkCommands (message) {
     }
 }
 
-module.exports.logError = async function (msg, error) {
-  console.log("logError", error)
+module.exports.logError = async function (msg, error, ex) {
+  console.log("logError", error, ex)
   if (error && error.toString().trim())
     try {
       await client.channels.get(msg.channel.id).send(error.toString().trim()); 
-    } catch (ex) {console.log("logError", ex)};
+    } catch (ex) {console.log("logError 2", ex)};
 }
 
 module.exports.notify = async function (msg, message) {

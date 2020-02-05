@@ -6,9 +6,19 @@
   <div class="row">
     {{#each images}}
     <div class="col-lg-2 col-md-3 col-6" style="margin-bottom:10px;">
-      <img src="{{url}}" class="card-img-top">
+      <img data-urls="{{urls}}" class="card-img-top"></img>
     </div>
     {{/each}}
   </div>
 </div>
 {{/each}}
+
+<script>
+  for (let img of document.querySelectorAll('.card-img-top')) {
+    let urls = img.dataset.urls.split(',');
+    img.onerror = function() {
+      if (urls.length) img.src = urls.shift();
+    }
+    img.onerror();
+  }
+</script>

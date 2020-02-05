@@ -7,6 +7,7 @@ dependencies:
   nedb: 1.8.0
   nedb-promises: 3.0.2
   pngjs: 3.3.3
+  pretty-bytes: 5.3.0
   probe-image-size: 4.0.0
   timeago.js: 4.0.0-beta.2
   xhr2: 0.1.4
@@ -741,6 +742,12 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-1n3Z4p3IOxArEs1VRXnZ/RXdfEniAUS9jb68g58FIXMNkPJeZd+Qh4Uq7/e0LVxAQGos1eIUrqrt4FpjdnEd+Q==
+  /pretty-bytes/5.3.0:
+    dev: false
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-hjGrh+P926p4R4WbaB6OckyRtO0F0/lQBiT+0gnxjV+5kjPBrfVBFCsCLbMqVQeydvIoouYTCmmEURiH3R1Bdg==
   /prism-media/0.0.3:
     dev: false
     resolution:
@@ -1049,6 +1056,7 @@ specifiers:
   nedb: '*'
   nedb-promises: '*'
   pngjs: '*'
+  pretty-bytes: ^5.3.0
   probe-image-size: '*'
   timeago.js: '*'
   xhr2: '*'
