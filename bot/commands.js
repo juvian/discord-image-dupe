@@ -237,7 +237,7 @@ async function processCommands(commands, command, message) {
     }
   } catch (ex) {
       if (ex instanceof botUtils.CustomError) return bot.notify(message, ex.message);
-      return bot.logError(message, "An error occured processing " + command + ": " + ex.message); 
+      return bot.logError(message, "An error occured processing " + command + ": " + ex.message, ex); 
   } 
 }
 

@@ -18,7 +18,7 @@ async function messageCount (msg, params) {
     let response = '';   
     let errors = ''
 
-    let reaction = message.reactions.find((r) => r.emoji.name == '☑');
+    let reaction = message.reactions.find((r) => r.emoji.name == '☑' || r.emoji.name == '☑️');
 
     if (reaction) {
       let interestingUsers = (await reaction.fetchUsers()).filter((u) => message.guild.members.get(u.id) && !message.guild.members.get(u.id).roles.has(winnersRole)).map((u) => u.id)

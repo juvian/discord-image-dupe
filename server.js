@@ -8,6 +8,7 @@ const bot = require("./bot/index");
 const hbars = require('express-handlebars');
 const db = require('./bot/db.js');
 const imageUtils = require('./utils/image');
+const probeSize = require('probe-image-size');
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -29,7 +30,7 @@ app.get('/recent', async function(req, res) {
     if(servers[im.guildId].images.length < 10) servers[im.guildId].images.push(im);
     servers[im.guildId].count++;
     
-    im.url = imageUtils.getResizedUrls(im, im)[0];
+    im.urls = imageUtils.getResizedUrls(im, im);
     
     return servers;
   }, {});

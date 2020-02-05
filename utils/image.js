@@ -21,11 +21,13 @@ function getResizedUrls(imageData, image) {
   
       let urls = [];
 
-      if (image.url.includes("discordapp") && image.width) {
+      if (image.url.includes("discordapp") && imageData.width) {
         urls.push(image.url.replace("cdn.discordapp.com", "media.discordapp.net") + (image.url.includes("cdn.discordapp.com") ? params : ''))
       } else {
-        urls.push("https://rsz.io/" + image.url.replace("https://", "").replace("http://", "") + params);
-        urls.push("http://www.picresize.com/api" + params + "&fetch=" + image.url);
+        if (image.proxyURL) urls.push(image.proxyURL + params);
+        //urls.push("https://rsz.io/" + image.url.replace("https://", "").replace("http://", "") + params);
+        urls.push("https://images.weserv.nl/?url=" + image.url + params.replace("width", "w").replace("height", "h"))
+        //urls.push("http://www.picresize.com/api" + params + "&fetch=" + image.url);
         urls.push(image.url + params);
       }
 
@@ -59,18 +61,20 @@ async function updateImageHash (image, index) {
       if (image.tries >= 3) {
         console.log(ex, "image removed", image.url);
         await db.images.remove({_id: image._id});
+        let config = await dbUtils.getServerConfig(image.guildId);  
+        if (config.logChannel) await bot.notify({channel : {id: config.logChannel}}, new RichEmbed().setDescription(`failed to process image ${image.messageId}`));
       } else console.log(ex)
     }
   }
 }
 
 
-async function getImageWithoutHash (message) {
+async function getImageWithoutHash () {
   return await db.images.findOne({hash: {$exists: false}});
 }
 
 async function calculateMissingHashes (message) {
-  let image = await getImageWithoutHash(message);
+  let image = await getImageWithoutHash();
   let index = 0;
   
   while (image != null) {
