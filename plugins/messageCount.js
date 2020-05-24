@@ -23,8 +23,10 @@ async function messageCount (msg, params) {
     if (reaction) {
       let interestingUsers = (await reaction.fetchUsers()).filter((u) => message.guild.members.get(u.id) && !message.guild.members.get(u.id).roles.has(winnersRole)).map((u) => u.id)
       let users = {}
-      for (let channelId of process.env.CHANNELS_TO_COUNT.split(',')) {
-          let messages = await bot.client.channels.get(channelId).fetchMessages({limit: 100});
+      let channels = message.guild.channels.filter(c => message.guild.me.permissionsIn(c).has('VIEW_CHANNEL') && c.type == 'text').map(c => c.id);
+
+      for (let channelId of channels) {
+          let messages = await message.guild.channels.get(channelId).fetchMessages({limit: 100});
           while (messages.size) {
               messages.array().forEach((message) => {
                   if (message.createdTimestamp <= params[2].getTime() && message.createdTimestamp >= params[1].getTime()) {

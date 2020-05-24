@@ -4,8 +4,8 @@
 // init project
 const express = require('express');
 const app = express();
-const bot = require("./bot/index");
 const hbars = require('express-handlebars');
+const bot = require("./bot/index");
 const db = require('./bot/db.js');
 const imageUtils = require('./utils/image');
 const probeSize = require('probe-image-size');

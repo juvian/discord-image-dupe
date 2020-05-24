@@ -24,6 +24,8 @@ async function getChannelConfig (channel) {
 }
 
 async function getGroupChannels(channelId, guildId) {
+  if (bot.client.guilds.get(guildId) == null) return [];
+  
   let serverConfig = await getServerConfig(guildId);
   let channels = await bot.client.guilds.get(guildId).channels.array();
   let dbChannels = await db.channels.find({_id: {$in: channels.map(c => c.id)}});
