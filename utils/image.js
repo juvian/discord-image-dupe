@@ -9,10 +9,13 @@ const bot = require('../bot/index.js');
 const probeSize = require('probe-image-size');
 const prettyBytes = require('pretty-bytes');
 
+function imageUrl(image) {
+  return `https://discordapp.com/channels/${image.guildId}/${image.channelId}/${image.messageId}`
+}
 
 function imageInfo (image, useMarkdown) {
     image.author = image.author || {username: '?', displayName: '?'}
-    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} (${prettyBytes(image.fileSize || 0)}) posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${image.messageUrl})` : "")
+    return (useMarkdown ? '[' : '') + `${image.width} x ${image.height} (${prettyBytes(image.fileSize || 0)}) posted by ${image.author.displayName || image.author.username} in ${image.channelName} ${timeago.format(image.createdTimestamp)} ${image.diff != null ? '(' + image.diff + ' bits)' : ''}` + (useMarkdown ? `](${imageUrl(image)})` : "")
 }
 
 function getResizedUrls(imageData, image) {
@@ -38,6 +41,7 @@ function getResizedUrls(imageData, image) {
 
 async function updateImageHash (image, index) {
   if (image && image.hash == null) {
+    console.log("updateImageHash", image.url, "start")
     try {
       if (image.tries >= 3) throw "Too many tries for " + image.url;
       await db.images.update({_id: image._id}, {$inc: {tries: 1}});
@@ -65,6 +69,7 @@ async function updateImageHash (image, index) {
         if (config.logChannel) await bot.notify({channel : {id: config.logChannel}}, new RichEmbed().setDescription(`failed to process image ${image.messageId}`));
       } else console.log(ex)
     }
+    console.log("updateImageHash", image.url, "end")
   }
 }
 
@@ -111,7 +116,7 @@ async function findDuplicateHashes () {
     try {
       let channelIds = (await dbUtils.getGroupChannels(image.channelId, image.guildId)).map(c => c._id);
       filters.channelId = {$in: channelIds};
-    } catch(ex) {}
+    } catch(ex) {console.log("rip", ex)}
   
     let images = (await db.images.find(filters)).filter(im => isSimilar(im, image) && im._id != image._id);
     let messages = {originals: []}
@@ -147,7 +152,7 @@ async function findDuplicates () {
               await db.images.remove({_id: data.image._id});
             }
           
-            await bot.react(imageMessage, "♻");
+            await bot.react(imageMessage, "♻️");
             if (config.logChannel) await bot.notify({channel : {id: config.logChannel}}, embed);
         }
         let a = await dbUtils.markAsProcessed(data.image);

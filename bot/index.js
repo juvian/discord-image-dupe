@@ -8,7 +8,6 @@ const db = require('../bot/db.js');
 const botUtils = require('../bot/utils.js');
 const axios = require('axios');
 
-
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}! in ${client.guilds.size} servers`);
   client.user.setActivity("!help", {type: "PLAYING"})
@@ -126,14 +125,20 @@ async function processMessages (messages, config) {
             createdTimestamp: message.createdTimestamp,
             author: message.author.id,
             messageId: message.id,
-            messageUrl: message.url,
             channelId: message.channel.id,
             guildId: message.guild.id,
             proxyURL: attachment.proxyURL
           }
 
           if (config.scannedOnce != true) image.processed = true;
-
+          
+          let count = await db.images.count({guildId: message.guild.id});
+          while (count > 10000) {
+            let im = await db.images.find({guildId: message.guild.id}).sort({createdTimestamp: 1}).limit(1)
+            await db.images.remove({_id: im._id});
+            count--;
+          }
+          
           await db.images.update({_id: image._id}, {$set: image}, {upsert: true});
 
           if (added == false) {
@@ -175,6 +180,5 @@ module.exports.react = async function (msg, reaction) {
 
 module.exports.client = client;
 module.exports.updateMessagesFromChannel = updateMessagesFromChannel;
-
-client.login(process.env.TOKEN).catch(ex => {throw ex});
+client.login(process.env.TOKEN).then(() => console.log("logged in")).catch(ex => {throw ex});
 
