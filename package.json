@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "axios": "*",
-    "discord.js": "11.6.3",
+    "discord.js": "11.4.2",
     "express": "^4.16.4",
     "express-handlebars": "*",
     "jpeg-js": "*",
