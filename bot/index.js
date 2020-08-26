@@ -23,7 +23,7 @@ client.on('guildCreate', async guild => {
 });
 
 async function notifyGuildCount () {
-  axios.post("https://bots.ondiscord.xyz/bot-api/bots/" + client.user.id + "/guilds", {guildCount: client.guilds.size}, {headers: {"Authorization": process.env.BOT_LIST_API_KEY}}).catch(e => console.log("failed to update bot count"));
+  //axios.post("https://bots.ondiscord.xyz/bot-api/bots/" + client.user.id + "/guilds", {guildCount: client.guilds.size}, {headers: {"Authorization": process.env.BOT_LIST_API_KEY}}).catch(e => console.log("failed to update bot count"));
 }
 
 client.on("message", async message => {
