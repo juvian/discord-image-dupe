@@ -41,8 +41,8 @@ For Developers
 You can add commands as plugins by adding a file in plugins folder, look at plugins/messageCount.js for an example.
 Necessary variables to setup in .env:
 
-- BOT_OWNER: user id of bot owner
-- TOKEN: bot token to login
+- BOT_OWNER= user id of bot owner
+- TOKEN= bot token to login
 
 **How to host the bot yourself**
 -------------------------------
