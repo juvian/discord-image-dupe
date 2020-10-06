@@ -44,4 +44,13 @@ Necessary variables to setup in .env:
 - BOT_OWNER: user id of bot owner
 - TOKEN: bot token to login
 
-
+**How to host the bot yourself**
+-------------------------------
+- Get a server where you will host it
+- Install node
+- Download code
+- Run npm install in code directory
+- Go to discord developer portal, create an app and then create a bot. Get the token
+- Create a .env file setting BOT_OWNER and TOKEN as stated above
+- Install dotenv: npm install dotenv --save
+- Run bot: node -r dotenv/config server.js
