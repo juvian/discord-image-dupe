@@ -42,7 +42,7 @@ async function calculateDifference (message, args) {
 async function setHistoryDuration (message, args) {
     if (args.length < 1 || parseInt(args[1]) < 0) return bot.notify(message, "Invalid usage. Usage: !history channel days where days is the amount of days to preserve and channel is server/channelId/channelName")
     
-    if (parseInt(args[1]) > 90) return bot.notify(message, "90 days is the maximum");
+    //if (parseInt(args[1]) > 90) return bot.notify(message, "90 days is the maximum");
   
     if (args[0] == 'server' && parseInt(args[1])) {
       await db.servers.update({_id: message.guild.id}, {$set: {history: parseInt(args[1])}});
