@@ -55,3 +55,14 @@ Necessary variables to setup in .env:
 - Create a folder named .data (mkdir .data in cmd)
 - Install dotenv: npm install dotenv --save
 - Run bot: node -r dotenv/config server.js
+
+Common issues
+----------------
+Sometimes things don't install well and it does not work, in that case you can try:
+- Remove node_modules folder
+- Remove package-lock.json file
+- Run npm cache clean --force
+- Run again npm install
+- Install dotenv again
+- Run bot again
+
