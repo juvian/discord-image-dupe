@@ -35,6 +35,26 @@ Commands
 
 **Note: admin is either someone with the configured admin role or with administrator permissions. A mod is someone with the configured mod role or with manage guild permission**
 
+Plugins
+-------------
+
+Plugins extend the functionality of the bot, and are great to build upon without changing other files that might conflict with future bot changes.
+
+**topPosters**
+-------------
+This plugin adds a way to view how many images were posted by each user in a scoreboard. Commands:
+- top: shows scoreboard. Can optionally add date from and date to for only counting within range. Note that the count is over the images bot has already scanned and kept, so the amount of history days it keeps is relevant for it
+- top?: shows example of usage with date range
+- reset top: resets scoreboard. Actually, it just changes the default from date of !top command to current date. Can be changed to a specific date adding the date parameter
+- reset top?: shows example using date
+
+There are a few .env settings related to this plugin:
+- ALLOW_TOP=true (enables commands)
+- TOP_PAGE_LIMIT=10 (sets the amount of users to show for each page with !top. 10 is the default so unless you want another amount line is not needed)
+- EMOJI_LEFT=778664915085819914 (emoji id to use for scoreboard pagination to go to previous page)
+- EMOJI_RIGHT=778664914650791969 (emoji id to use for scoreboard pagination to go to next page)
+
+To get the id of an emoji you can either right click and open link and see the number before the .png part or you can write add a \ character before the emoji and submit it in a message and it will show its id
 
 For Developers
 ------------

@@ -50,9 +50,7 @@ async function getImageHashes (imageIds) {
   return db.images.find({$or: [{_id: {$in: imageIds}}, {messageId: {$in: imageIds}}]});
 }
 
-
-async function addRelatedInfo (images) {
-  let userIds = new Set(images.map(i => i.author))
+async function getUsers(userIds) {
   let users = await db.users.find({_id: {$in: Array.from(userIds)}});
   let usersMap = new Map(users.map(u => [u._id, u]));
 
@@ -65,6 +63,13 @@ async function addRelatedInfo (images) {
       } catch (e) {}
     }
   })
+
+  return usersMap;
+}
+
+async function addRelatedInfo (images) {
+  let userIds = new Set(images.map(i => i.author))
+  let usersMap = await getUsers(userIds);
 
   images.forEach(message => {
     message.author = usersMap.get(message.author.toString());
@@ -118,15 +123,16 @@ async function addUser (author, member) {
 }
 
 module.exports = {
-  getServerConfig: getServerConfig,
-  compactImages: compactImages,
-  getImageHashes: getImageHashes,
-  addRelatedInfo: addRelatedInfo,
-  deleteOldImages: deleteOldImages,
-  markAsProcessed: markAsProcessed,
-  addUser: addUser,
-  getChannelConfig: getChannelConfig,
-  deleteVeryOldImages: deleteVeryOldImages,
-  getLeeway: getLeeway,
-  getGroupChannels: getGroupChannels
+  getServerConfig,
+  compactImages,
+  getImageHashes,
+  addRelatedInfo,
+  deleteOldImages,
+  markAsProcessed,
+  addUser,
+  getChannelConfig,
+  deleteVeryOldImages,
+  getLeeway,
+  getGroupChannels,
+  getUsers
 }
