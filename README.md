@@ -74,7 +74,7 @@ Necessary variables to setup in .env:
 - Create a .env file setting BOT_OWNER and TOKEN as stated above
 - Create a folder named .data (mkdir .data in cmd)
 - Install dotenv: npm install dotenv --save
-- Run bot: node -r dotenv/config server.js
+- Run bot: node -r dotenv/config bot/index.js
 
 Common issues
 ----------------

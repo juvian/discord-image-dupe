@@ -5,8 +5,8 @@ const db = require('../bot/db.js');
 const RichEmbed = require('discord.js').RichEmbed;
 const permissions = require('../bot/permissions.js');
 
-const EMOJI_LEFT = process.env.EMOJI_LEFT || '778664915085819914';
-const EMOJI_RIGHT = process.env.EMOJI_RIGHT || '778664914650791969';
+const EMOJI_LEFT = process.env.EMOJI_LEFT || '⏪';
+const EMOJI_RIGHT = process.env.EMOJI_RIGHT || '⏩';
 const PAGE_LIMIT = Number(process.env.TOP_PAGE_LIMIT || "10");
 const ALLOW_TOP = process.env.ALLOW_TOP == 'true';
 
