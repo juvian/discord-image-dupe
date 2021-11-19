@@ -9,6 +9,7 @@ const EMOJI_LEFT = process.env.EMOJI_LEFT || '⏪';
 const EMOJI_RIGHT = process.env.EMOJI_RIGHT || '⏩';
 const PAGE_LIMIT = Number(process.env.TOP_PAGE_LIMIT || "10");
 const ALLOW_TOP = process.env.ALLOW_TOP == 'true';
+const COUNTER_TEXT = process.env.COUNTER_TEXT || 'images';
 
 const isSameEmoji = (emoji, str) => emoji.id == str || emoji.name == str;
 
@@ -32,7 +33,7 @@ async function createEmbed(guildId, page, filters) {
 
     for (let i = 0; i < topUsers.length; i++) {
       const name = usersMap.has(topUsers[i].userId) ? usersMap.get(topUsers[i].userId).tag : topUsers[i].userId;
-      lines.push(`${i + (page * PAGE_LIMIT) + 1}.  ${name}  - ${topUsers[i].posts} images`);
+      lines.push(`${i + (page * PAGE_LIMIT) + 1}.  ${name}  - ${topUsers[i].posts} ${COUNTER_TEXT}`);
     }
 
     richEmbed.setDescription(lines.join('\n'));
