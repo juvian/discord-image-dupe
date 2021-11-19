@@ -152,10 +152,10 @@ async function findDuplicates () {
               await db.images.remove({_id: data.image._id});
             }
           
-            await bot.react(imageMessage, "♻️");
+            await bot.react(imageMessage, "♻️").catch(e => console.log(e));
             if (config.logChannel) await bot.notify({channel : {id: config.logChannel}}, embed);
         }
-        let a = await dbUtils.markAsProcessed(data.image);
+        await dbUtils.markAsProcessed(data.image);
         data = await findDuplicateHashes();
     }        
 }

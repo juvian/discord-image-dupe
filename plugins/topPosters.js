@@ -10,11 +10,12 @@ const EMOJI_RIGHT = process.env.EMOJI_RIGHT || '⏩';
 const PAGE_LIMIT = Number(process.env.TOP_PAGE_LIMIT || "10");
 const ALLOW_TOP = process.env.ALLOW_TOP == 'true';
 
+const isSameEmoji = (emoji, str) => emoji.id == str || emoji.name == str;
 
 async function paginate(message, newMessage, embed, page, filters, hasNext) {
-    let emojis = await newMessage.awaitReactions((reaction, user) => ((reaction.emoji.id == EMOJI_LEFT && page > 0) || (reaction.emoji.id == EMOJI_RIGHT && hasNext)) && user.id == message.author.id, {max: 1, time: 60000}).catch(_ => {});
+    let emojis = await newMessage.awaitReactions((reaction, user) => ((isSameEmoji(reaction.emoji, EMOJI_LEFT) && page > 0) || (isSameEmoji(reaction.emoji, EMOJI_RIGHT) && hasNext)) && user.id == message.author.id, {max: 1, time: 60000}).catch(_ => {});
     if (!emojis || !emojis.first()) return;
-    page = emojis.first()._emoji.id == EMOJI_LEFT ? page - 1 : page + 1;
+    page = isSameEmoji(emojis.first()._emoji, EMOJI_LEFT) ? page - 1 : page + 1;
     embed = await createEmbed(message.guild.id, page, filters);
     await newMessage.edit(embed);
 
