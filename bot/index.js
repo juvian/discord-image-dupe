@@ -132,12 +132,12 @@ async function processMessages (messages, config) {
 
           if (config.scannedOnce != true) image.processed = true;
           
-          let count = await db.images.count({guildId: message.guild.id});
+          /*let count = await db.images.count({guildId: message.guild.id});
           while (count > 10000) {
             let im = await db.images.find({guildId: message.guild.id}).sort({createdTimestamp: 1}).limit(1)
             await db.images.remove({_id: im._id});
             count--;
-          }
+          }*/
           
           await db.images.update({_id: image._id}, {$set: image}, {upsert: true});
 
