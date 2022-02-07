@@ -19,7 +19,7 @@ Commands
 - delete image: takes an image id or message id as parameter and deletes from internal database the referenced images. Only available to mods or admins
 - missing process: Shows how many images already have their hash but have not been compared against others to check for duplicates. Only available to mods or admins
 - difference: takes 2 image ids or message ids and calculates the hash difference between them (under 10 is usually the same or a slight variation)
-- history: set the amount of days the server/channel will keep track of images. Maximum is 90. Category channels also work. If the history of a channel has not been defined, it uses the configuration of its category. If that is not defined either, it uses the configuration of the server. Default for server is 30. Messages will need to be reprocessed if this changes, use sparingly. Only available to admins
+- history: set the amount of days the server/channel will keep track of images. Category channels also work. If the history of a channel has not been defined, it uses the configuration of its category. If that is not defined either, it uses the configuration of the server. Default for server is 30. Messages will need to be reprocessed if this changes, use sparingly. Only available to admins
 - closest: takes 1 image id or message id and returns info on closest image to that one
 - set admin role: takes a role name to be considered the admin role. All users with this role can use admin commands. The default one is Futaba Admin. Only available to server owner
 - set mod role: takes a role name to be considered the mod role. All users with this role can use mod commands. The default one is Futaba Mod. Only available to server owner
