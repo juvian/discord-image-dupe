@@ -70,7 +70,7 @@ Necessary variables to setup in .env:
 - Install node
 - Download code
 - Run npm install in code directory
-- Go to discord developer portal, create an app and then create a bot. Get the token
+- Go to discord developer portal, create an app and then create a bot. Get the token. Also select your application and go to bot section then activate "MESSAGE CONTENT INTENT" from Privileged Gateway Intents.
 - Create a .env file setting BOT_OWNER and TOKEN as stated above
 - Create a folder named .data (mkdir .data in cmd)
 - Install dotenv: npm install dotenv --save
